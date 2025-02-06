@@ -1,6 +1,13 @@
 #libs
 from termcolor import colored
-import os , time , calendar
+import os , time , calendar , sqlite3
+# connection & set-up with DB
+connection = sqlite3.connect("histrory.db")
+db = connection.cursor()
+try :
+    db.execute("create table history (command varchar(200))")
+except :
+    pass
 #fnctns
 def dir(place):
     dirList = ''
@@ -13,9 +20,18 @@ prevCommand = {
     'callback':""
 }
 sheet = ''
+def displayHis():
+    db.execute("select * from history")
+    data = db.fetchall()
+    history = ''
+    for his in data :
+        history +=str(his[0]'\n')
+    print(history)
+    return history
 def callback(msg) :
     print(msg+'\n')
     prevCommand["callback"] = msg
+    db.execute(f"alter history() insert({prevCommand['input']})")
 #vars
 orders={"write$":"callback(more)",
         "open$":r"os.system(more),callback('opened'+more)",
@@ -38,7 +54,8 @@ orders={"write$":"callback(more)",
         'calc$':"calback(eval(more))",
         "help$":"calback(list(orders.keys()))",
         "redirect$":"open(more,mode='a').write(prevCommand['input']+'\n'+prevCommand['output'])",
-        "save$":"open(more,mode='a).write(sheet)"
+        "save$":"open(more,mode='a).write(sheet)",
+        "history$":"callback(displayHis())"
     }
 # the execution
 print(colored("Welcome to edw","red"))
