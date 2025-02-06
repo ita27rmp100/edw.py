@@ -1,6 +1,6 @@
 #libs
 from termcolor import colored
-import os , time , calendar , sqlite3 , sys
+import os , time , calendar , sqlite3 , platform
 # connection & set-up with DB
 connection = sqlite3.connect("histrory.db")
 db = connection.cursor()
@@ -31,7 +31,21 @@ def displayHis():
 def callback(msg) :
     print(msg+'\n')
     prevCommand["callback"] = msg
-    db.execute(f"alter history() insert({prevCommand['input']})")
+    db.execute(f"INSERT INTO history VALUES ('{prevCommand['input']}')")
+def restart() :
+    if platform.system()=="Windows" :
+        os.system("shutdown /r")
+    else :
+        os.system("sudo reboot")
+def infoSys(arg) :
+    result = ''
+    if " -r" in arg :
+        result += platform.release()
+    if " -s" in arg :
+        result += platform.system()
+    if " -v" in arg :
+        result += platform.version()
+    return result
 #vars
 orders={"write$":"callback(more)",
         "open$":r"os.system(more),callback('opened'+more)",
@@ -42,7 +56,7 @@ orders={"write$":"callback(more)",
         "cfo$": "os.mkdir(more),print('created folder with name : '+more)",
         "rfi$": "os.remove(more),print('removed'+more)",
         "cfi$": "open(more,mode='x'),print('created file with name : '+more)",
-        "quit$":"callback('quit ... hasta leugo')',quit()",
+        "quit$":"callback('goodbye'),quit()",
         "reboot$":"callback('reboot'),os.system('c:\Windows\System32\shutdown.exe /s /t 1')",
         "dir$":"callback(listdir(more))", #
         "time$":"callback(time.ctime())",
@@ -59,14 +73,23 @@ orders={"write$":"callback(more)",
         "save$":"open(more,mode='a).write(sheet)",
         "history$":"callback(displayHis())",
         "delhis$":"db.execute(delete from history)",
-        "chtime$":"callback(os.system('time'))"
+        "chtime$":"callback(os.system('time'))",
+        "restart$":"restart()", # supported only for windows and linux
+        "sysinfo$":"callback(infoSys(more))"
     }
+greeting = """
+#  .............._............................_..................._......................
+#  __......_____|.|.___.___.._.__.___...___..|.|_.___.....___..__|.__......___.__.._..._.
+#  \.\./\././._.|.|/.__/._.\|.'_.`._.\./._.\.|.__/._.\.../._.\/._`.\.\./\./.|.'_.\|.|.|.|
+#  .\.V..V.|..__|.|.(_|.(_).|.|.|.|.|.|..__/.|.||.(_).|.|..__|.(_|.|\.V..V._|.|_).|.|_|.|
+#  ..\_/\_/.\___|_|\___\___/|_|.|_|.|_|\___|..\__\___/...\___|\__,_|.\_/\_(_|..__/.\__,.|
+#  .........................................................................|_|....|___/.
+"""
 # the execution
-print(colored("Welcome to edw","red"))
+print(colored(greeting,"red"))
 print(colored("-"*50,"blue"),"\r")
 while True :
-    print(colored(os.getcwd)+"@:","green")
-    instrct = input()
+    instrct = input(colored(os.getcwd()+"@: ","green"))
     try:
         g = instrct[0:instrct.index("$")+1]
         more = instrct[instrct.index("$")+2:]
