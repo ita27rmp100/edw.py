@@ -1,6 +1,6 @@
 #libs
 from termcolor import colored
-import os , time , calendar , sqlite3
+import os , time , calendar , sqlite3 , sys
 # connection & set-up with DB
 connection = sqlite3.connect("histrory.db")
 db = connection.cursor()
@@ -25,7 +25,7 @@ def displayHis():
     data = db.fetchall()
     history = ''
     for his in data :
-        history +=str(his[0]'\n')
+        history +=str(his[0]+'\n')
     print(history)
     return history
 def callback(msg) :
@@ -44,7 +44,7 @@ orders={"write$":"callback(more)",
         "cfi$": "open(more,mode='x'),print('created file with name : '+more)",
         "quit$":"callback('quit ... hasta leugo')',quit()",
         "reboot$":"callback('reboot'),os.system('c:\Windows\System32\shutdown.exe /s /t 1')",
-        "dir$":"callback(dir(more))",
+        "dir$":"callback(listdir(more))", #
         "time$":"callback(time.ctime())",
         "clear$":"os.system('cls'),callback('')",
         "chrome$":"os.startfile('C:\Program Files\Google\Chrome\Application\chrome.exe'),callback('google chrome opened')",
@@ -53,9 +53,13 @@ orders={"write$":"callback(more)",
         "calendar$":"callback(calendar.month(int(more[0:more.index(',')]),int(more[more.index(',')+1:])))",
         'calc$':"calback(eval(more))",
         "help$":"calback(list(orders.keys()))",
-        "redirect$":"open(more,mode='a').write(prevCommand['input']+'\n'+prevCommand['output'])",
+        # from here the new commands
+        "redirect$":"open(more,mode='w').write(prevCommand['input']+'\n'+prevCommand['output'])",
+        "redirect -ow$":"open(more,mode='a').write(prevCommand['input']+'\n'+prevCommand['output'])",
         "save$":"open(more,mode='a).write(sheet)",
-        "history$":"callback(displayHis())"
+        "history$":"callback(displayHis())",
+        "delhis$":"db.execute(delete from history)",
+        "chtime$":"callback(os.system('time'))"
     }
 # the execution
 print(colored("Welcome to edw","red"))

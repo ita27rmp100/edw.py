@@ -1,4 +1,3 @@
-# open('mhfbdj.txt',mode='a').write("hello nigga")
 stri = 'holla'
 obj = {
     "name":'ahmed',
