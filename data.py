@@ -17,7 +17,7 @@ commands={"write$":"callback(more)",
         "read$":"callback(os.system(f'type {more}'))",
         "calendar$":"callback(calendar.month(int(more[0:more.index(',')]),int(more[more.index(',')+1:])))",
         'calc$':"calback(eval(more))",
-        "help$":"calback(list(orders.keys()))",
+        "help$":"calback(list(commands.keys()))",
         # from here the new commands
         "redirect$":"open(more,mode='w').write(prevCommand['input']+'\n'+prevCommand['output'])",
         "redirect -ow$":"open(more,mode='a').write(prevCommand['input']+'\n'+prevCommand['output'])",

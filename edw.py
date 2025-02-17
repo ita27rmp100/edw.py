@@ -56,7 +56,7 @@ while True :
         g = instrct[0:instrct.index("$")+1]
         more = instrct[instrct.index("$")+2:]
         prevCommand["input"] = instrct
-        eval(orders[g])
+        eval(commands[g])
         sheet += str(prevCommand)
     except NameError as msg:
         print(msg)
